@@ -3,7 +3,10 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from streamlit_lottie import st_lottie
 from PIL import Image
+from llama_index import GPTVectorStoreIndex, SimpleDirectoryReader, LLMPredictor, ServiceContext
+from langchain.chat_models import ChatOpenAI
 import base64
+import openai
 
 
 # Find more emojis here: https://www.webfx.com/tools/emoji-cheat-sheet/
@@ -27,18 +30,116 @@ local_css("style/style.css")
 
 # ---- LOAD ASSETS ----
 lottie_coding = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_fcfjwiyb.json")
-img_contact_form = Image.open("images/yt_contact_form.png")
-img_lottie_animation = Image.open("images/yt_lottie_animation.png")
+# img_contact_form = Image.open("images/yt_contact_form.png")
+# img_lottie_animation = Image.open("images/yt_lottie_animation.png")
+# load the file
+# bio_info = SimpleDirectoryReader(input_files=["bio.txt"]).load_data()
 
-
-# ----- SIDE BAR-------
-# with st.sidebar:
+# ---- HEADER SECTION ----
 st.header("Hi, I am Vinay Kaundinya :wave:")
+
+# -----------------  CHATBOT  ----------------- 
+# ----- SIDE BAR-------
+
+with st.sidebar:
+    st.header("Hello, I am KEN!")
+    openai_api_key = st.text_input('Enter your OpenAI API Key and hit Enter', type="password")
+    openai.api_key = (openai_api_key)
+
+# Define LLM and make OPENAI calls
+def ask_bot(input_text):
+    # define LLM
+    llm = ChatOpenAI(
+        model_name="gpt-3.5-turbo",
+        temperature=0,
+        openai_api_key=openai.api_key,
+    )
+    llm_predictor = LLMPredictor(llm=llm)
+    service_context = ServiceContext.from_defaults(llm_predictor=llm_predictor)
+    
+    # load index
+    index = GPTVectorStoreIndex.from_documents(bio_info, service_context=service_context)    
+    
+    # query LlamaIndex and GPT-3.5 for the AI's response
+    PROMPT_QUESTION = f"""You are Buddy, an AI assistant dedicated to assisting Vinay Kaundinya in his job search by providing recruiters with relevant and concise information. 
+    If you do not know the answer, politely admit it and let recruiters know how to contact Vinay to get more information directly from him. 
+    Don't put "Buddy" or a breakline in the front of your answer.
+    Human: {input}
+    """
+    
+    output = index.as_query_engine().query(PROMPT_QUESTION.format(input=input_text))
+    print(f"output: {output}")
+    return output.response
+
+
+# # ---- HOME ----
+# with st.container():
+#     left_column, right_column = st.columns(2)
+#     with left_column:
+#         st.title("A Data Scientist From Germany")
+#         st.write("I am passionate about finding ways to use AI, ML and NLP to be more efficient and effective in business settings.")
+        
+#     with right_column:
+#         # st.image("images/vinay_kaundinya.jpeg")
+#         st.empty()
+
+# # -----WHAT I DO------    
+# with st.container():
+#     st.write("---")
+#     left_column, right_column = st.columns(2)
+#     with left_column:
+#         st.header("What I do")
+#         st.write("##")
+#         st.write(
+#         """
+#         On my YouTube channel I am creating tutorials for people who:
+#         - are looking for a way to leverage the power of Python in their day-to-day work.
+#         - are struggling with repetitive tasks in Excel and are looking for a way to use Python and VBA.
+#         - want to learn Data Analysis & Data Science to perform meaningful and impactful analyses.
+#         - are working with Excel and found themselves thinking - "there has to be a better way."
+#         If this sounds interesting to you, consider subscribing and turning on the notifications, so you don’t miss any content.
+#         """
+#         )
+#     with right_column:
+#         st_lottie(lottie_coding, height=300, key="coding")
+
+# # ------- RESUME ------    
+# with st.container(): 
+#     st.write("---")
+#     with open("images/resume.pdf","rb") as f:
+#         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+#         pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700mm" height="500mm" type="application/pdf"></iframe>'
+#         st.markdown(pdf_display, unsafe_allow_html=True)
+
+
+# # ---- CONTACT ----
+# with st.container():
+#     st.write("---")
+#     st.header("Get In Touch With Me!")
+#     st.write("##")
+    
+#     # Documention: https://formsubmit.co/ !!! CHANGE EMAIL ADDRESS !!!
+#     contact_form = """
+#     <form action="https://formsubmit.co/vinaykaundinya95@gmail.com" method="POST">
+#     <input type="hidden" name="_captcha" value="false">
+#     <input type="text" name="name" placeholder="Your name" required>
+#     <input type="email" name="email" placeholder="Your email" required>
+#     <textarea name="message" placeholder="Your message here" required></textarea>
+#     <button type="submit">Send</button>
+#     </form>
+#     """
+#     left_column, right_column = st.columns(2)
+#     with left_column:
+#         st.markdown(contact_form, unsafe_allow_html=True)
+#     with right_column:
+#         st.empty()
+
+
 with st.container():
     selected = option_menu(None, ["Home", 'Resume', 'Contact'], icons=['house', 'file', 'envelope'], menu_icon="cast", default_index=0, orientation="horizontal", )
 
     if selected == 'Home':
-        # ---- HEADER SECTION ----
+        # ---- HOME ----
         with st.container():
             left_column, right_column = st.columns(2)
             with left_column:
@@ -48,26 +149,29 @@ with st.container():
                 )
             with right_column:
                 st.image("images/vinay_kaundinya.jpeg")
-            # -----WHAT I DO------
-            with st.container():
-                st.write("---")
-                left_column, right_column = st.columns(2)
-                with left_column:
-                    st.header("What I do")
-                    st.write("##")
-                    st.write(
-                    """
-                    On my YouTube channel I am creating tutorials for people who:
-                    - are looking for a way to leverage the power of Python in their day-to-day work.
-                    - are struggling with repetitive tasks in Excel and are looking for a way to use Python and VBA.
-                    - want to learn Data Analysis & Data Science to perform meaningful and impactful analyses.
-                    - are working with Excel and found themselves thinking - "there has to be a better way."
+        
+        
+        # -----WHAT I DO------
+        with st.container():
+            st.write("---")
+            left_column, right_column = st.columns(2)
+            with left_column:
+                st.header("What I do")
+                st.write("##")
+                st.write(
+                """
+                On my YouTube channel I am creating tutorials for people who:
+                - are looking for a way to leverage the power of Python in their day-to-day work.
+                - are struggling with repetitive tasks in Excel and are looking for a way to use Python and VBA.
+                - want to learn Data Analysis & Data Science to perform meaningful and impactful analyses.
+                - are working with Excel and found themselves thinking - "there has to be a better way."
 
-                    If this sounds interesting to you, consider subscribing and turning on the notifications, so you don’t miss any content.
-                    """
-                    )
-                with right_column:
-                    st_lottie(lottie_coding, height=300, key="coding")
+                If this sounds interesting to you, consider subscribing and turning on the notifications, so you don’t miss any content.
+                """
+                )
+
+            with right_column:
+                st_lottie(lottie_coding, height=300, key="coding")
 
 
     if selected == 'Resume':

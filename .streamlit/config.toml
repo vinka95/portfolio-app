@@ -4,7 +4,7 @@
 primaryColor = '#212529'
 
 # Background color for the main content area
-backgroundColor = '#004052'
+backgroundColor = '#212529'
 
 #Background color for secondary elements
 secondaryBackgroundColor= '#495057'
