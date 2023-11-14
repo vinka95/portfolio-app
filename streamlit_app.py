@@ -177,7 +177,7 @@ with st.container():
         # -----WHAT I DO------
         with st.container():
             st.write("---")
-            left_column, right_column = st.columns((2,1))
+            left_column, right_column = st.columns(2)
             with left_column:
                 st.header("What I do")
                 st.write("##")
