@@ -138,8 +138,24 @@ def ask_bot(input_text):
 with st.container():
     selected = option_menu(None, ["Home", 'Resume', 'Contact'], icons=['house', 'file', 'envelope'], menu_icon="cast", default_index=0, orientation="horizontal", )
 
-    if selected == 'Home':
-        # ---- HOME ----
+    if selected == "Home":
+        # ----- USER TEXT BOX ------
+        # get the user's input by calling the get_text function
+        def get_text():
+            input_text = st.text_input("After providing OpenAI API Key on the sidebar, you can send your questions and hit Enter to know more about me from my AI agent, Buddy!", key="input")
+            return input_text
+
+        #st.markdown("Chat With Me Now")
+        user_input = get_text()
+
+        if user_input:
+        #text = st.text_area('Enter your questions')
+            if not openai_api_key.startswith('sk-'):
+                st.warning('⚠️Please enter your OpenAI API key on the sidebar.', icon='⚠')
+            if openai_api_key.startswith('sk-'):
+                st.info(ask_bot(user_input))
+
+        # ------- HOME --------
         with st.container():
             left_column, right_column = st.columns((2,1))
             with left_column:
@@ -174,14 +190,14 @@ with st.container():
                 st_lottie(lottie_coding, height=300, key="coding")
 
 
-    if selected == 'Resume':
+    if selected == "Resume":
         with st.container(): 
             with open("images/resume.pdf","rb") as f:
                 base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-                pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700mm" height="1000mm" type="application/pdf"></iframe>'
+                pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700mm" height="600mm" type="application/pdf"></iframe>'
                 st.markdown(pdf_display, unsafe_allow_html=True)
 
-    if selected == 'Contact':
+    if selected == "Contact":
     # ---- CONTACT ----
         with st.container():
             st.write("---")
