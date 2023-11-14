@@ -7,4 +7,4 @@ watchdog==2.1.8
 streamlit_option_menu
 llama_index
 openai==0.28
-langchain.chat_models
+langchain
