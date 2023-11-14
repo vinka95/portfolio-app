@@ -29,9 +29,16 @@ def local_css(file_name):
 local_css("style/style.css")
 
 # ---- LOAD ASSETS ----
-lottie_coding = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_fcfjwiyb.json")
+python_lottie = load_lottieurl("https://assets6.lottiefiles.com/packages/lf20_2znxgjyt.json")
+my_sql_lottie = load_lottieurl("https://assets4.lottiefiles.com/private_files/lf30_w11f2rwn.json")
+git_lottie = load_lottieurl("https://assets9.lottiefiles.com/private_files/lf30_03cuemhb.json")
+docker_lottie = load_lottieurl("https://assets4.lottiefiles.com/private_files/lf30_35uv2spq.json")
+js_lottie = load_lottieurl("https://lottie.host/fc1ad1cd-012a-4da2-8a11-0f00da670fb9/GqPujskDlr.json")
 # img_contact_form = Image.open("images/yt_contact_form.png")
 # img_lottie_animation = Image.open("images/yt_lottie_animation.png")
+
+
+
 # load the file
 # bio_info = SimpleDirectoryReader(input_files=["bio.txt"]).load_data()
 
@@ -151,7 +158,7 @@ with st.container():
         if user_input:
         #text = st.text_area('Enter your questions')
             if not openai_api_key.startswith('sk-'):
-                st.warning('⚠️Please enter your OpenAI API key on the sidebar.', icon='⚠')
+                st.warning('Please enter your OpenAI API key on the sidebar.', icon='hammer')
             if openai_api_key.startswith('sk-'):
                 st.info(ask_bot(user_input))
 
@@ -188,6 +195,22 @@ with st.container():
 
             with right_column:
                 st_lottie(lottie_coding, height=300, key="coding")
+        
+        # ----------------- SKILLSET ----------------- #        
+        with st.container():
+            st.write("---")
+            st.subheader('Skills')
+            col1, col2, col3 = st.columns([1, 1, 1])
+            with col1:
+                st_lottie(python_lottie, height=70,width=70, key="python", speed=2.5)
+            with col2:
+                st_lottie(my_sql_lottie,height=70,width=70, key="mysql", speed=2.5)
+            with col3:
+                st_lottie(git_lottie,height=70,width=70, key="git", speed=2.5)
+            with col1:
+                st_lottie(docker_lottie,height=70,width=70, key="docker", speed=2.5)
+            with col2:
+                st_lottie(js_lottie,height=50,width=50, key="js", speed=1)
 
 
     if selected == "Resume":
